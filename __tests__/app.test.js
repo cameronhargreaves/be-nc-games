@@ -70,3 +70,40 @@ describe("GET /api/reviews", () => {
       });
   });
 });
+
+describe("GET /api/reviews/:review_id", () => {
+  test("200: should respond with a single review information", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then((result) => {
+        expect(result.body.review).toMatchObject({
+          review_id: 1,
+          title: expect.any(String),
+          category: expect.any(String),
+          designer: expect.any(String),
+          owner: expect.any(String),
+          review_body: expect.any(String),
+          review_img_url: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+        });
+      });
+  });
+  test("404: review not found", () => {
+    return request(app)
+      .get("/api/reviews/112312831273821787")
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("Review Not Found");
+      });
+  });
+  test("400: bad input", () => {
+    return request(app)
+      .get("/api/reviews/onetwothree")
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Bad Request");
+      });
+  });
+});

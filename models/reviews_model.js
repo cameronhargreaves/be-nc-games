@@ -13,3 +13,21 @@ exports.selectReviews = () => {
     )
     .then((reviews) => reviews.rows);
 };
+
+exports.selectReview = (review_id) => {
+  if (isNaN(review_id)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  return db.query(`SELECT * FROM reviews WHERE review_id = ${review_id}`).then((review) => {
+    if (review.rows.length < 1) {
+      return Promise.reject({
+        status: 404,
+        msg: "Review Not Found",
+      });
+    }
+    return review.rows[0];
+  });
+};
