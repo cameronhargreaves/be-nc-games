@@ -61,4 +61,12 @@ describe("GET /api/reviews", () => {
         });
       });
   });
+  test("200: should respond with reviews ordered by date descending", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then((result) => {
+        expect(result.body.reviews).toBeSortedBy("created_at", { descending: true });
+      });
+  });
 });

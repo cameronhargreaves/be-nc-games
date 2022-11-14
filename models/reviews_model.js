@@ -8,7 +8,8 @@ exports.selectReviews = () => {
   reviews.votes, reviews.designer, counts.comment_count FROM reviews
   LEFT JOIN (SELECT review_id, COUNT(review_id) as comment_count FROM reviews
   GROUP BY review_id) as counts
-  ON counts.review_id = reviews.review_id;`
+  ON counts.review_id = reviews.review_id
+  ORDER BY reviews.created_at DESC;`
     )
     .then((reviews) => reviews.rows);
 };
