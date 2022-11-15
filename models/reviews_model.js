@@ -56,11 +56,7 @@ exports.insertComment = (review_id, newComment) => {
       msg: "Bad Request",
     });
   }
-  if (
-    Object.keys(newComment).length !== 2 ||
-    !newComment.hasOwnProperty("body") ||
-    !newComment.hasOwnProperty("username")
-  ) {
+  if (!newComment.hasOwnProperty("body") || !newComment.hasOwnProperty("username")) {
     return Promise.reject({
       status: 400,
       msg: "Bad Request",
