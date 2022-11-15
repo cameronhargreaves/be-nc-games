@@ -259,3 +259,66 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
+
+describe("PATCH /api/reviews/:review_id", () => {
+  test("200: should update votes addition succesfully", () => {
+    const updateVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(updateVotes)
+      .expect(200)
+      .then((result) => {
+        expect(result.body.review.votes).toBe(2);
+      });
+  });
+  test("200: should update votes subtraction succesfully", () => {
+    const updateVotes = { inc_votes: -100 };
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(updateVotes)
+      .expect(200)
+      .then((result) => {
+        expect(result.body.review.votes).toBe(-99);
+      });
+  });
+  test("400: bad request for non-number updated value", () => {
+    const updateVotes = { inc_votes: "hellooooooooo" };
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(updateVotes)
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Bad Request");
+      });
+  });
+  test("404: review not found", () => {
+    const updateVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/reviews/9999999")
+      .send(updateVotes)
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("Resource not found");
+      });
+  });
+  test("400: bad request when inc_votes not given", () => {
+    const updateVotes = { add_the_votes: 1 };
+    return request(app)
+      .patch("/api/reviews/9999999")
+      .send(updateVotes)
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: bad request when invalid id given", () => {
+    const updateVotes = { add_the_votes: 1 };
+    return request(app)
+      .patch("/api/reviews/helloooooooo")
+      .send(updateVotes)
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Bad Request");
+      });
+  });
+});
