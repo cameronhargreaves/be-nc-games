@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const { checkExists } = require("../utils/utils.js");
 
 exports.selectReviews = () => {
   return db
@@ -30,4 +31,20 @@ exports.selectReview = (review_id) => {
     }
     return review.rows[0];
   });
+};
+
+exports.selectCommentsForReviewId = (review_id) => {
+  if (isNaN(review_id)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  return checkExists("reviews", "review_id", review_id)
+    .then(() => {
+      return db.query(`SELECT * FROM comments WHERE review_id = ${review_id}`);
+    })
+    .then((comments) => {
+      return comments.rows;
+    });
 };
