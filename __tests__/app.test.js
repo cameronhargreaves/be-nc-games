@@ -152,3 +152,64 @@ describe("GET /api/reviews/:review_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/reviews/:review_id/comments", () => {
+  test("201: Item added successfully", () => {
+    const newComment = {
+      username: "mallionaire",
+      body: "worst thing ive ever played",
+    };
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then((result) => {
+        expect(result.body.comment).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          review_id: expect.any(Number),
+        });
+      });
+  });
+  test("404: bad input for incorrect username", () => {
+    const newComment = {
+      username: "cameronhargreaves",
+      body: "worst thing ive ever played",
+    };
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(newComment)
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("Resource not found");
+      });
+  });
+  test("404: review not found", () => {
+    const newComment = {
+      username: "mallionaire",
+      body: "worst thing ive ever played",
+    };
+    return request(app)
+      .post("/api/reviews/999999999/comments")
+      .send(newComment)
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("Resource not found");
+      });
+  });
+  test("400: bad request", () => {
+    const newComment = {
+      username: "mallionaire",
+    };
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Bad Request");
+      });
+  });
+});

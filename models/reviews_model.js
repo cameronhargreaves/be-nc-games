@@ -48,3 +48,36 @@ exports.selectCommentsForReviewId = (review_id) => {
       return comments.rows;
     });
 };
+
+exports.insertComment = (review_id, newComment) => {
+  if (isNaN(review_id)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  if (
+    Object.keys(newComment).length !== 2 ||
+    !newComment.hasOwnProperty("body") ||
+    !newComment.hasOwnProperty("username")
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  const { username, body } = newComment;
+  return checkExists("reviews", "review_id", review_id)
+    .then(() => {
+      return checkExists("users", "username", username);
+    })
+    .then(() => {
+      return db.query(
+        "INSERT INTO comments (votes, created_at, author, body, review_id) VALUES ($1,$2,$3,$4,$5) RETURNING *",
+        [0, new Date(), username, body, review_id]
+      );
+    })
+    .then((comment) => {
+      return comment.rows[0];
+    });
+};
