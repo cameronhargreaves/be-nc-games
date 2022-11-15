@@ -127,9 +127,17 @@ describe("GET /api/reviews/:review_id/comments", () => {
         });
       });
   });
-  test("404: comments not found", () => {
+  test("200: returns empty array for no comments", () => {
     return request(app)
       .get("/api/reviews/1/comments")
+      .expect(200)
+      .then((result) => {
+        expect(result.body).toMatchObject({ comments: [] });
+      });
+  });
+  test("404: comments not found", () => {
+    return request(app)
+      .get("/api/reviews/99999/comments")
       .expect(404)
       .then((result) => {
         expect(result.body.msg).toBe("Resource not found");
