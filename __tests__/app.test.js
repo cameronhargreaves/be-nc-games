@@ -18,7 +18,7 @@ describe("GET /api/categories", () => {
       .get("/api/categories")
       .expect(200)
       .then((result) => {
-        expect(result.length > 0);
+        expect(result.body.categories.length > 0).toBe(true);
         result.body.categories.forEach((category) => {
           expect(category).toMatchObject({
             slug: expect.any(String),
@@ -67,6 +67,43 @@ describe("GET /api/reviews", () => {
       .expect(200)
       .then((result) => {
         expect(result.body.reviews).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
+
+describe("GET /api/reviews/:review_id", () => {
+  test("200: should respond with a single review information", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then((result) => {
+        expect(result.body.review).toMatchObject({
+          review_id: 1,
+          title: "Agricola",
+          category: "euro game",
+          designer: "Uwe Rosenberg",
+          owner: "mallionaire",
+          review_body: "Farmyard fun!",
+          review_img_url: "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          created_at: "2021-01-18T10:00:20.514Z",
+          votes: 1,
+        });
+      });
+  });
+  test("404: review not found", () => {
+    return request(app)
+      .get("/api/reviews/112312831273821787")
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("Review Not Found");
+      });
+  });
+  test("400: bad input", () => {
+    return request(app)
+      .get("/api/reviews/onetwothree")
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Bad Request");
       });
   });
 });
