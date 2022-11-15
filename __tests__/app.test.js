@@ -18,7 +18,7 @@ describe("GET /api/categories", () => {
       .get("/api/categories")
       .expect(200)
       .then((result) => {
-        expect(result.length > 0);
+        expect(result.body.categories.length > 0).toBe(true);
         result.body.categories.forEach((category) => {
           expect(category).toMatchObject({
             slug: expect.any(String),
@@ -79,14 +79,14 @@ describe("GET /api/reviews/:review_id", () => {
       .then((result) => {
         expect(result.body.review).toMatchObject({
           review_id: 1,
-          title: expect.any(String),
-          category: expect.any(String),
-          designer: expect.any(String),
-          owner: expect.any(String),
-          review_body: expect.any(String),
-          review_img_url: expect.any(String),
-          created_at: expect.any(String),
-          votes: expect.any(Number),
+          title: "Agricola",
+          category: "euro game",
+          designer: "Uwe Rosenberg",
+          owner: "mallionaire",
+          review_body: "Farmyard fun!",
+          review_img_url: "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          created_at: "2021-01-18T10:00:20.514Z",
+          votes: 1,
         });
       });
   });
