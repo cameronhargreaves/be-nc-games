@@ -1,4 +1,10 @@
-const { selectReviews, selectReview, selectCommentsForReviewId, insertComment } = require("../models/reviews_model");
+const {
+  selectReviews,
+  selectReview,
+  selectCommentsForReviewId,
+  insertComment,
+  updateReview,
+} = require("../models/reviews_model");
 
 exports.getReviews = (req, res, next) => {
   selectReviews()
@@ -32,6 +38,16 @@ exports.postComment = (req, res, next) => {
   insertComment(review_id, newComment)
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.patchReview = (req, res, next) => {
+  const { review_id } = req.params;
+  const updatedVotes = req.body;
+  updateReview(review_id, updatedVotes)
+    .then((review) => {
+      res.status(200).send({ review });
     })
     .catch(next);
 };

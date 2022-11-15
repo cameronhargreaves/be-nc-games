@@ -77,3 +77,26 @@ exports.insertComment = (review_id, newComment) => {
       return comment.rows[0];
     });
 };
+
+exports.updateReview = (review_id, updatedReview) => {
+  if (!updatedReview.hasOwnProperty("inc_votes")) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  const { inc_votes } = updatedReview;
+  if (isNaN(review_id) || isNaN(inc_votes)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  return checkExists("reviews", "review_id", review_id)
+    .then(() => {
+      return db.query(`UPDATE reviews SET votes = votes + ${inc_votes} WHERE review_id = ${review_id} RETURNING *`);
+    })
+    .then((comments) => {
+      return comments.rows[0];
+    });
+};
