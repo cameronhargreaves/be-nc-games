@@ -322,3 +322,23 @@ describe("PATCH /api/reviews/:review_id", () => {
       });
   });
 });
+
+describe("GET /api/users", () => {
+  test("200: responds with array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .then((result) => {
+        expect(result.body.users.length > 0).toBe(true);
+        result.body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+  test("404: route not found", () => {
+    return request(app).get("/api/alltheusers").expect(404);
+  });
+});
