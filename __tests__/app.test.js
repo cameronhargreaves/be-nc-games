@@ -311,4 +311,14 @@ describe("PATCH /api/reviews/:review_id", () => {
         expect(result.body.msg).toBe("Bad Request");
       });
   });
+  test("400: bad request when invalid id given", () => {
+    const updateVotes = { add_the_votes: 1 };
+    return request(app)
+      .patch("/api/reviews/helloooooooo")
+      .send(updateVotes)
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Bad Request");
+      });
+  });
 });

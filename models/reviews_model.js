@@ -94,7 +94,7 @@ exports.updateReview = (review_id, updatedReview) => {
   }
   return checkExists("reviews", "review_id", review_id)
     .then(() => {
-      return db.query(`UPDATE reviews SET votes = votes + ${inc_votes} WHERE review_id = ${review_id} RETURNING *`);
+      return db.query(`UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *`, [inc_votes, review_id]);
     })
     .then((comments) => {
       return comments.rows[0];
