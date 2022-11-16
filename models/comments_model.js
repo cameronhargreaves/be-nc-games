@@ -2,7 +2,7 @@ const db = require("../db/connection.js");
 const { checkExists } = require("../utils/utils.js");
 
 exports.removeComment = (comment_id) => {
-  if (!isNaN(comment_id)) {
+  if (isNaN(comment_id)) {
     return Promise.reject({
       status: 400,
       msg: "Bad Request",

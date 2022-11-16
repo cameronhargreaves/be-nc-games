@@ -144,7 +144,7 @@ describe("GET /api/reviews", () => {
             expect(result.body.msg).toBe("Resource not found");
           });
       });
-      test.only("200: should return empty array for category that doesn't have any reviews", () => {
+      test("200: should return empty array for category that doesn't have any reviews", () => {
         return request(app)
           .get("/api/reviews?category=children's games")
           .expect(200)
@@ -448,13 +448,21 @@ describe("GET /api/users", () => {
   });
 });
 
-describe("DELETE /api/comments/:comment_id", () => {
+describe.only("DELETE /api/comments/:comment_id", () => {
   test("204: deletes comment correctly", () => {
-    return request(app).delete("/api/comments/:1").expect(204);
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(() => {
+        return db.query(`SELECT COUNT(*)::INT FROM comments WHERE comment_id = 1`);
+      })
+      .then((res) => {
+        expect(res.rows[0].count).toBe(0);
+      });
   });
   test("404: comment not found", () => {
     return request(app)
-      .delete("/api/comments/:999999")
+      .delete("/api/comments/999999")
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("Resource not found");
@@ -462,7 +470,7 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
   test("400: bad request", () => {
     return request(app)
-      .delete("/api/comments/:onetwothree")
+      .delete("/api/comments/onetwothree")
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Bad Request");
