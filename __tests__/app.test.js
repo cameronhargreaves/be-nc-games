@@ -108,9 +108,9 @@ describe("GET /api/reviews", () => {
       test("200: should default to descending given an invalid argument", () => {
         return request(app)
           .get("/api/reviews?order=AnyOrderPlease")
-          .expect(200)
+          .expect(400)
           .then((result) => {
-            expect(result.body.reviews).toBeSortedBy("created_at", { descending: true });
+            expect(result.body.msg).toBe("Bad Request");
           });
       });
     });
@@ -120,7 +120,7 @@ describe("GET /api/reviews", () => {
           .get("/api/reviews?category=euro game")
           .expect(200)
           .then((result) => {
-            expect(result.length > 0);
+            expect(result.body.reviews.length > 0).toBe(true);
             result.body.reviews.forEach((category) => {
               expect(category).toMatchObject({
                 owner: expect.any(String),

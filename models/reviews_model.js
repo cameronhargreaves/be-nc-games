@@ -4,7 +4,10 @@ const { checkExists } = require("../utils/utils.js");
 exports.selectReviews = (sort_by = "created_at", category, order = "desc") => {
   order = order.toUpperCase();
   if (order !== "ASC" && order !== "DESC") {
-    order = "DESC";
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
   }
   const sort_by_headers = [
     "owner",
