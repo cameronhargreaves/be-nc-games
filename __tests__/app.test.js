@@ -87,6 +87,26 @@ describe("GET /api/reviews/:review_id", () => {
           review_img_url: "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
           created_at: "2021-01-18T10:00:20.514Z",
           votes: 1,
+          comment_count: 0,
+        });
+      });
+  });
+  test("200: should respond with correct comment count", () => {
+    return request(app)
+      .get("/api/reviews/2")
+      .expect(200)
+      .then((result) => {
+        expect(result.body.review).toMatchObject({
+          review_id: 2,
+          title: expect.any(String),
+          category: expect.any(String),
+          designer: expect.any(String),
+          owner: expect.any(String),
+          review_body: expect.any(String),
+          review_img_url: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          comment_count: 3,
         });
       });
   });

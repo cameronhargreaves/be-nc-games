@@ -22,15 +22,27 @@ exports.selectReview = (review_id) => {
       msg: "Bad Request",
     });
   }
-  return db.query(`SELECT * FROM reviews WHERE review_id = ${review_id}`).then((review) => {
-    if (review.rows.length < 1) {
-      return Promise.reject({
-        status: 404,
-        msg: "Review Not Found",
-      });
-    }
-    return review.rows[0];
-  });
+  return db
+    .query(
+      `SELECT 
+      reviews.review_id, reviews.title, reviews.review_body,
+      reviews.designer, reviews.review_img_url, reviews.votes,
+      reviews.category, reviews.owner, reviews.created_at,
+      COUNT(comments.review_id)::INT as comment_count
+      FROM reviews
+      LEFT JOIN comments ON reviews.review_id = comments.review_id
+      WHERE reviews.review_id = ${review_id}
+      GROUP BY reviews.review_id;`
+    )
+    .then((review) => {
+      if (review.rows.length < 1) {
+        return Promise.reject({
+          status: 404,
+          msg: "Review Not Found",
+        });
+      }
+      return review.rows[0];
+    });
 };
 
 exports.selectCommentsForReviewId = (review_id) => {
