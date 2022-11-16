@@ -61,13 +61,98 @@ describe("GET /api/reviews", () => {
         });
       });
   });
-  test("200: should respond with reviews ordered by date descending", () => {
+  test("200: should respond with reviews ordered by date descending by default", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
       .then((result) => {
         expect(result.body.reviews).toBeSortedBy("created_at", { descending: true });
       });
+  });
+  describe("Queries", () => {
+    describe("Sort_By", () => {
+      test("200: should sort by given column", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=title")
+          .expect(200)
+          .then((result) => {
+            expect(result.body.reviews).toBeSortedBy("title", { descending: true });
+          });
+      });
+      test("400: should reject columns that arent in the DB", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=randomcolumnname")
+          .expect(400)
+          .then((result) => {
+            expect(result.body.msg).toBe("Bad Request");
+          });
+      });
+    });
+    describe("Order", () => {
+      test("200: should order by ascending", () => {
+        return request(app)
+          .get("/api/reviews?order=asc")
+          .expect(200)
+          .then((result) => {
+            expect(result.body.reviews).toBeSortedBy("created_at");
+          });
+      });
+      test("200: should order by descending", () => {
+        return request(app)
+          .get("/api/reviews?order=desc")
+          .expect(200)
+          .then((result) => {
+            expect(result.body.reviews).toBeSortedBy("created_at", { descending: true });
+          });
+      });
+      test("200: should default to descending given an invalid argument", () => {
+        return request(app)
+          .get("/api/reviews?order=AnyOrderPlease")
+          .expect(400)
+          .then((result) => {
+            expect(result.body.msg).toBe("Bad Request");
+          });
+      });
+    });
+    describe("Category", () => {
+      test("200: should return reviews with a given category", () => {
+        return request(app)
+          .get("/api/reviews?category=euro game")
+          .expect(200)
+          .then((result) => {
+            expect(result.body.reviews.length > 0).toBe(true);
+            result.body.reviews.forEach((category) => {
+              expect(category).toMatchObject({
+                owner: expect.any(String),
+                title: expect.any(String),
+                review_id: expect.any(Number),
+                category: "euro game",
+                review_img_url: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                designer: expect.any(String),
+                comment_count: expect.any(String),
+              });
+            });
+          });
+      });
+      test("404: should reject category for invalid category name", () => {
+        return request(app)
+          .get("/api/reviews?category=silly game")
+          .expect(404)
+          .then((result) => {
+            expect(result.body.msg).toBe("Resource not found");
+          });
+      });
+      test.only("200: should return empty array for category that doesn't have any reviews", () => {
+        return request(app)
+          .get("/api/reviews?category=children's games")
+          .expect(200)
+          .then((result) => {
+            expect((result.body.reviews.length = 0)).toBe(0);
+          });
+      });
+    });
   });
 });
 

@@ -1,18 +1,61 @@
 const db = require("../db/connection.js");
 const { checkExists } = require("../utils/utils.js");
 
-exports.selectReviews = () => {
-  return db
-    .query(
-      `SELECT reviews.owner, reviews.title, reviews.review_id,
+exports.selectReviews = (sort_by = "created_at", category, order = "desc") => {
+  order = order.toUpperCase();
+  if (order !== "ASC" && order !== "DESC") {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  const sort_by_headers = [
+    "owner",
+    "title",
+    "review_id",
+    "category",
+    "review_img_url",
+    "created_at",
+    "votes",
+    "designer",
+    "comment_count",
+  ];
+
+  if (!sort_by_headers.includes(sort_by)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+
+  if (sort_by === "comment_count") {
+    sort_by = "counts." + sort_by;
+  } else {
+    sort_by = "reviews." + sort_by;
+  }
+
+  let queryStr = `SELECT reviews.owner, reviews.title, reviews.review_id,
   reviews.category, reviews.review_img_url, reviews.created_at,
   reviews.votes, reviews.designer, counts.comment_count FROM reviews
   LEFT JOIN (SELECT review_id, COUNT(review_id) as comment_count FROM reviews
   GROUP BY review_id) as counts
-  ON counts.review_id = reviews.review_id
-  ORDER BY reviews.created_at DESC;`
-    )
-    .then((reviews) => reviews.rows);
+  ON counts.review_id = reviews.review_id`;
+
+  const categories = ["euro game", "social deduction", "dexterity", "children's games"];
+
+  if (category) {
+    if (!categories.includes(category)) {
+      return Promise.reject({
+        status: 404,
+        msg: "Resource not found",
+      });
+    }
+    if (category === "children's games") {
+      category = "children''s games";
+    }
+    queryStr += ` WHERE reviews.category = '${category}'`;
+  }
+  return db.query(`${queryStr} ORDER BY ${sort_by} ${order};`).then((reviews) => reviews.rows);
 };
 
 exports.selectReview = (review_id) => {
