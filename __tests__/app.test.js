@@ -447,3 +447,25 @@ describe("GET /api/users", () => {
     return request(app).get("/api/alltheusers").expect(404);
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: deletes comment correctly", () => {
+    return request(app).delete("/api/comments/:1").expect(204);
+  });
+  test("404: comment not found", () => {
+    return request(app)
+      .delete("/api/comments/:999999")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Resource not found");
+      });
+  });
+  test("400: bad request", () => {
+    return request(app)
+      .delete("/api/comments/:onetwothree")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+});
