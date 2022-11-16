@@ -50,6 +50,9 @@ exports.selectReviews = (sort_by = "created_at", category, order = "desc") => {
         msg: "Resource not found",
       });
     }
+    if (category === "children's games") {
+      category = "children''s games";
+    }
     queryStr += ` WHERE reviews.category = '${category}'`;
   }
   return db.query(`${queryStr} ORDER BY ${sort_by} ${order};`).then((reviews) => reviews.rows);

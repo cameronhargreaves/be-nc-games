@@ -144,6 +144,14 @@ describe("GET /api/reviews", () => {
             expect(result.body.msg).toBe("Resource not found");
           });
       });
+      test.only("200: should return empty array for category that doesn't have any reviews", () => {
+        return request(app)
+          .get("/api/reviews?category=children's games")
+          .expect(200)
+          .then((result) => {
+            expect((result.body.reviews.length = 0)).toBe(0);
+          });
+      });
     });
   });
 });
