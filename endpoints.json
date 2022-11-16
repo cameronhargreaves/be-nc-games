@@ -30,5 +30,51 @@
         }
       ]
     }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "mallionaire",
+          "name": "haz",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
+  },
+  "GET /api/reviews/:review_id": {
+    "description": "serves an array of a single review object",
+    "queries": [],
+    "exampleResponse": {
+      "review": {
+        "review_id": 1,
+        "title": "Agricola",
+        "category": "euro game",
+        "designer": "Uwe Rosenberg",
+        "owner": "mallionaire",
+        "review_body": "Farmyard fun!",
+        "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        "created_at": "2021-01-18T10:00:20.514Z",
+        "votes": 1,
+        "comment_count": 0
+      }
+    }
+  },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "",
+    "queries": [],
+    "exampleResponse": {}
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "",
+    "queries": [],
+    "exampleResponse": {}
+  },
+  "PATCH /api/reviews/:review_id": {
+    "description": "",
+    "queries": [],
+    "exampleResponse": {}
   }
 }

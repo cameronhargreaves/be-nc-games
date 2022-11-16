@@ -1,4 +1,5 @@
 const express = require("express");
+const { getInfo } = require("./controllers/base_controller.js");
 const app = express();
 const { getCategories } = require("./controllers/categories_controller.js");
 const {
@@ -11,6 +12,8 @@ const {
 } = require("./controllers/reviews_controller");
 
 app.use(express.json());
+
+app.get("/api", getInfo);
 
 app.get("/api/categories", getCategories);
 app.get("/api/reviews", getReviews);

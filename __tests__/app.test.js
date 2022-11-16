@@ -12,6 +12,12 @@ beforeEach(() => {
   return seed(data);
 });
 
+describe.only("GET /api", () => {
+  test("200: returns the endpoints.json object", () => {
+    return request(app).get("/api").expect(200);
+  });
+});
+
 describe("GET /api/categories", () => {
   test("200: should respond with category information", () => {
     return request(app)
