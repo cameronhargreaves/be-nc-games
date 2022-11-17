@@ -1,5 +1,3 @@
-const { getInfo } = require("fsevents");
-
 const apiRouter = require("express").Router();
 // /api
 
