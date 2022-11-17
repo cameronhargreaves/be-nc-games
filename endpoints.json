@@ -26,7 +26,8 @@
           "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
           "category": "hidden-roles",
           "created_at": 1610964101251,
-          "votes": 5
+          "votes": 5,
+          "comment_count": 1
         }
       ]
     }
@@ -63,17 +64,55 @@
     }
   },
   "GET /api/reviews/:review_id/comments": {
-    "description": "",
+    "description": "serves an array of comments for a given review_id",
     "queries": [],
-    "exampleResponse": {}
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 2,
+          "votes": 13,
+          "created_at": "2021-01-18 10:09:05.41",
+          "author": "mallionaire",
+          "body": "My dog loved this game too!",
+          "review_id": 3
+        }
+      ]
+    }
   },
   "POST /api/reviews/:review_id/comments": {
-    "description": "",
+    "description": "adds a comment with the given review_id",
     "queries": [],
-    "exampleResponse": {}
+    "exampleResponse": {
+      "review": {
+        "comment_id": 4,
+        "votes": 0,
+        "created_at": "2021-01-18 10:09:48.11'",
+        "author": "mallionaire",
+        "body": "Worst thing I've ever played",
+        "review_id": 3
+      }
+    }
   },
   "PATCH /api/reviews/:review_id": {
-    "description": "",
+    "description": "updates a specific review with a new votes value",
+    "queries": [],
+    "exampleResponse": {
+      "review": {
+        "review_id": 1,
+        "title": "Agricola",
+        "category": "euro game",
+        "designer": "Uwe Rosenberg",
+        "owner": "mallionaire",
+        "review_body": "Farmyard fun!",
+        "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        "created_at": "2021-01-18T10:00:20.514Z",
+        "votes": 25,
+        "comment_count": 0
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a specific comment with its comment_id",
     "queries": [],
     "exampleResponse": {}
   }
