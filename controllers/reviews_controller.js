@@ -5,6 +5,7 @@ const {
   insertComment,
   updateReview,
   insertReview,
+  removeReview,
 } = require("../models/reviews_model");
 
 exports.getReviews = (req, res, next) => {
@@ -60,6 +61,15 @@ exports.postReview = (req, res, next) => {
   insertReview(newReview)
     .then((review) => {
       res.status(201).send({ review });
+    })
+    .catch(next);
+};
+
+exports.deleteReview = (req, res, next) => {
+  const { review_id } = req.params;
+  removeReview(review_id)
+    .then(() => {
+      res.status(204).end();
     })
     .catch(next);
 };

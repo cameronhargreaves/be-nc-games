@@ -1,4 +1,3 @@
-const { id } = require("prelude-ls");
 const db = require("../db/connection.js");
 const { checkExists } = require("../utils/utils.js");
 
@@ -196,4 +195,20 @@ exports.insertReview = (newReview) => {
         });
     });
   });
+};
+
+exports.removeReview = (review_id) => {
+  if (isNaN(review_id)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  return checkExists("reviews", "review_id", review_id)
+    .then(() => {
+      return db.query(`DELETE from comments WHERE review_id = $1`, [review_id]);
+    })
+    .then(() => {
+      return db.query(`DELETE from reviews WHERE review_id = $1`, [review_id]);
+    });
 };

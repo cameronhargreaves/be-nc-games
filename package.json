@@ -5,7 +5,7 @@
   "main": "listen.js",
   "scripts": {
     "seed": "node ./db/seeds/run-seed.js",
-    "test": "jest",
+    "test": "jest --verbose",
     "prepare": "husky install",
     "seed-prod": "NODE_ENV=production npm run seed",
     "start": "node listen.js"

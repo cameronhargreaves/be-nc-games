@@ -784,4 +784,24 @@ describe("POST /api/categories", () => {
   });
 });
 
-describe("DELETE /api/reviews/:review_id", () => {});
+describe("DELETE /api/reviews/:review_id", () => {
+  test("204: should delete a review properly", () => {
+    return request(app).delete("/api/reviews/2").expect(204);
+  });
+  test("400: rejects incorrect format of user_id", () => {
+    return request(app)
+      .delete("/api/reviews/helloooo")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+  test("404: review not found", () => {
+    return request(app)
+      .delete("/api/reviews/999999")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Resource not found");
+      });
+  });
+});
