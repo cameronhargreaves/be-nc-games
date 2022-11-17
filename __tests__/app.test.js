@@ -460,7 +460,7 @@ describe("GET /api/users", () => {
   });
 });
 
-describe.only("DELETE /api/comments/:comment_id", () => {
+describe("DELETE /api/comments/:comment_id", () => {
   test("204: deletes comment correctly", () => {
     return request(app)
       .delete("/api/comments/1")
