@@ -1,7 +1,7 @@
 const express = require("express");
 const { getInfo } = require("./controllers/base_controller.js");
 const app = express();
-const { getCategories } = require("./controllers/categories_controller.js");
+const { getCategories, postCategory } = require("./controllers/categories_controller.js");
 const { deleteComment, patchComment } = require("./controllers/comments_controller.js");
 const apiRouter = require("./routes/api-router.js");
 const reviewsRouter = require("./routes/reviews-router.js");
@@ -16,6 +16,7 @@ app.use("/api/reviews", reviewsRouter);
 app.use("/api/users", usersRouter);
 
 app.get("/api/categories", getCategories);
+app.post("/api/categories", postCategory);
 
 app.delete("/api/comments/:comment_id", deleteComment);
 app.patch("/api/comments/:comment_id", patchComment);

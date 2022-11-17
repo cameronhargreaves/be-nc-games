@@ -27,7 +27,8 @@ exports.getReview = (req, res, next) => {
 
 exports.getCommentsForReviewId = (req, res, next) => {
   const { review_id } = req.params;
-  selectCommentsForReviewId(review_id)
+  const { limit, p } = req.query;
+  selectCommentsForReviewId(review_id, limit, p)
     .then((comments) => {
       res.status(200).send({ comments });
     })

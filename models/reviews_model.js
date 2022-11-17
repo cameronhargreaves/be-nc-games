@@ -92,8 +92,8 @@ exports.selectReview = (review_id) => {
     });
 };
 
-exports.selectCommentsForReviewId = (review_id) => {
-  if (isNaN(review_id)) {
+exports.selectCommentsForReviewId = (review_id, limit = 10, p = 1) => {
+  if (isNaN(review_id) || isNaN(limit) || isNaN(p)) {
     return Promise.reject({
       status: 400,
       msg: "Bad Request",
@@ -101,7 +101,8 @@ exports.selectCommentsForReviewId = (review_id) => {
   }
   return checkExists("reviews", "review_id", review_id)
     .then(() => {
-      return db.query(`SELECT * FROM comments WHERE review_id = ${review_id}`);
+      p = (p - 1) * limit;
+      return db.query(`SELECT * FROM comments WHERE review_id = ${review_id} LIMIT $1 OFFSET $2`, [limit, p]);
     })
     .then((comments) => {
       return comments.rows;

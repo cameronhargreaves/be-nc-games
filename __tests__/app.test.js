@@ -308,6 +308,41 @@ describe("GET /api/reviews/:review_id/comments", () => {
         expect(result.body.msg).toBe("Bad Request");
       });
   });
+  describe("Pagination", () => {
+    test("200: returns max 10 comments by default", () => {
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .expect(200)
+        .then((result) => {
+          expect(result.body.comments.length).toBeLessThanOrEqual(10);
+        });
+    });
+    test("200: returns custom amount of comments", () => {
+      return request(app)
+        .get("/api/reviews/2/comments?limit=2")
+        .expect(200)
+        .then((result) => {
+          expect(result.body.comments.length).toBeLessThanOrEqual(2);
+        });
+    });
+    test("200: returns custom amount of comments offset by a page", () => {
+      return request(app)
+        .get("/api/reviews/2/comments?limit=1&p=2")
+        .expect(200)
+        .then((result) => {
+          expect(result.body.comments.length).toBeLessThanOrEqual(1);
+          expect(result.body.comments[0].comment_id).toBe(4);
+        });
+    });
+    test("400: returns error when given non number limit and page", () => {
+      return request(app)
+        .get("/api/reviews/2/comments?limit=one&p=two")
+        .expect(400)
+        .then((result) => {
+          expect(result.body.msg).toBe("Bad Request");
+        });
+    });
+  });
 });
 
 describe("POST /api/reviews/:review_id/comments", () => {
@@ -704,3 +739,49 @@ describe("POST /api/reviews", () => {
       });
   });
 });
+
+describe("POST /api/categories", () => {
+  test("201: should add a category", () => {
+    const newCategory = {
+      slug: "horror game",
+      description: "scary spooky game",
+    };
+    return request(app)
+      .post("/api/categories")
+      .send(newCategory)
+      .expect(201)
+      .then((res) => {
+        expect(res.body.category).toMatchObject({
+          slug: "horror game",
+          description: "scary spooky game",
+        });
+      });
+  });
+  test("400: should reject category if either property is undefined", () => {
+    const newCategory = {
+      slug: undefined,
+      description: undefined,
+    };
+    return request(app)
+      .post("/api/categories")
+      .send(newCategory)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: should reject category if either property is missing", () => {
+    const newCategory = {
+      description: "hello this is very cool",
+    };
+    return request(app)
+      .post("/api/categories")
+      .send(newCategory)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("DELETE /api/reviews/:review_id", () => {});
