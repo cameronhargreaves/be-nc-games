@@ -165,6 +165,46 @@ describe("GET /api/reviews", () => {
           });
       });
     });
+    describe("Limit and Page Count", () => {
+      test("200: returns first 10 reviews by default", () => {
+        return request(app)
+          .get("/api/reviews")
+          .expect(200)
+          .then((result) => {
+            expect(result.body.reviews.length).toBeLessThanOrEqual(10);
+          });
+      });
+      test("200: returns first custom number of reviews by default", () => {
+        return request(app)
+          .get("/api/reviews?limit=5")
+          .expect(200)
+          .then((result) => {
+            expect(result.body.reviews.length).toBeLessThanOrEqual(5);
+          });
+      });
+      test("200: returns next 10 reviews offset by page count", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=review_id&order=asc&limit=5&p=2")
+          .expect(200)
+          .then((result) => {
+            expect(result.body.reviews.length).toBeLessThanOrEqual(5);
+            expect(result.body.reviews[0].review_id).toBe(6);
+            expect(result.body.reviews[1].review_id).toBe(7);
+            expect(result.body.reviews[2].review_id).toBe(8);
+            expect(result.body.reviews[3].review_id).toBe(9);
+            expect(result.body.reviews[4].review_id).toBe(10);
+          });
+      });
+      test("200: should add the total_count to the output", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=review_id&order=asc&limit=7&p=2")
+          .expect(200)
+          .then((result) => {
+            expect(result.body.reviews.length).toBeLessThanOrEqual(7);
+            expect(result.body.total_count).toBe(6);
+          });
+      });
+    });
   });
 });
 

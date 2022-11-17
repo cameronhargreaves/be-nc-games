@@ -2,7 +2,7 @@ const { id } = require("prelude-ls");
 const db = require("../db/connection.js");
 const { checkExists } = require("../utils/utils.js");
 
-exports.selectReviews = (sort_by = "created_at", category, order = "desc") => {
+exports.selectReviews = (sort_by = "created_at", category, order = "desc", limit = 10, p = 1) => {
   order = order.toUpperCase();
   if (order !== "ASC" && order !== "DESC") {
     return Promise.reject({
@@ -56,7 +56,10 @@ exports.selectReviews = (sort_by = "created_at", category, order = "desc") => {
     }
     queryStr += ` WHERE reviews.category = '${category}'`;
   }
-  return db.query(`${queryStr} ORDER BY ${sort_by} ${order};`).then((reviews) => reviews.rows);
+  p = (p - 1) * limit;
+  return db
+    .query(`${queryStr} ORDER BY ${sort_by} ${order} LIMIT $1 OFFSET $2;`, [limit, p])
+    .then((reviews) => reviews.rows);
 };
 
 exports.selectReview = (review_id) => {
