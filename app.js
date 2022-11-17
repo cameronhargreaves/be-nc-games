@@ -3,45 +3,25 @@ const { getInfo } = require("./controllers/base_controller.js");
 const app = express();
 const { getCategories } = require("./controllers/categories_controller.js");
 const { deleteComment } = require("./controllers/comments_controller.js");
-const {
-  getReviews,
-  getReview,
-  getCommentsForReviewId,
-  postComment,
-  patchReview,
-  getUsers,
-} = require("./controllers/reviews_controller");
+const { getUsers } = require("./controllers/reviews_controller");
+const apiRouter = require("./routes/api-router.js");
+const reviewsRouter = require("./routes/reviews-router.js");
 
 app.use(express.json());
 
 app.get("/api", getInfo);
-app.get("/api/health", (req, res) => {
-  res.status(200).send({ msg: "server up and running" });
-});
+
+app.use("/api", apiRouter);
+app.use("/api/reviews", reviewsRouter);
+
 app.get("/api/categories", getCategories);
-app.get("/api/reviews", getReviews);
-app.get("/api/reviews/:review_id", getReview);
-app.get("/api/reviews/:review_id/comments", getCommentsForReviewId);
 app.get("/api/users", getUsers);
-
-app.post("/api/reviews/:review_id/comments", postComment);
-
-app.patch("/api/reviews/:review_id", patchReview);
 
 app.delete("/api/comments/:comment_id", deleteComment);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Route not found" });
 });
-
-//psql errors
-// app.use((err, req, res, next) => {
-//   if (err.code === "22P02") {
-//     res.status(400).send({ msg: "Bad Request" });
-//   } else {
-//     next(err);
-//   }
-// });
 
 //custom error
 app.use((err, req, res, next) => {
@@ -50,10 +30,10 @@ app.use((err, req, res, next) => {
   }
 });
 
-// //final error
-// app.use((err, req, res, next) => {
-//   console.log(err);
-//   res.sendStatus(500).send("Internal Server Error");
-// });
+//final error
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.sendStatus(500).send("Internal Server Error");
+});
 
 module.exports = app;
