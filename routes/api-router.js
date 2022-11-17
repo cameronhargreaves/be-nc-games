@@ -1,4 +1,4 @@
-const { getInfo } = require("./controllers/base_controller.js");
+const { getInfo } = require("../controllers/base_controller.js");
 const apiRouter = require("express").Router();
 // /api
 
