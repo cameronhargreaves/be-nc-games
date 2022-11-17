@@ -3,9 +3,9 @@ const { getInfo } = require("./controllers/base_controller.js");
 const app = express();
 const { getCategories } = require("./controllers/categories_controller.js");
 const { deleteComment } = require("./controllers/comments_controller.js");
-const { getUsers } = require("./controllers/reviews_controller");
 const apiRouter = require("./routes/api-router.js");
 const reviewsRouter = require("./routes/reviews-router.js");
+const usersRouter = require("./routes/users-router.js");
 
 app.use(express.json());
 
@@ -13,9 +13,9 @@ app.get("/api", getInfo);
 
 app.use("/api", apiRouter);
 app.use("/api/reviews", reviewsRouter);
+app.use("/api/users", usersRouter);
 
 app.get("/api/categories", getCategories);
-app.get("/api/users", getUsers);
 
 app.delete("/api/comments/:comment_id", deleteComment);
 

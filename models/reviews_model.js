@@ -155,9 +155,3 @@ exports.updateReview = (review_id, updatedReview) => {
       return comments.rows[0];
     });
 };
-
-exports.selectUsers = () => {
-  return db.query(`SELECT * FROM USERS;`).then((users) => {
-    return users.rows;
-  });
-};

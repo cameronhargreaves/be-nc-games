@@ -489,3 +489,26 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("GET /api/users/:username", () => {
+  test("200: gets a users information", () => {
+    return request(app)
+      .get("/api/users/mallionaire")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.user).toMatchObject({
+          username: "mallionaire",
+          name: "haz",
+          avatar_url: "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        });
+      });
+  });
+  test("404: user not found", () => {
+    return request(app)
+      .get("/api/users/millionaire")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Resource not found");
+      });
+  });
+});

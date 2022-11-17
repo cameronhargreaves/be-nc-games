@@ -4,7 +4,6 @@ const {
   selectCommentsForReviewId,
   insertComment,
   updateReview,
-  selectUsers,
 } = require("../models/reviews_model");
 
 exports.getReviews = (req, res, next) => {
@@ -50,14 +49,6 @@ exports.patchReview = (req, res, next) => {
   updateReview(review_id, updatedVotes)
     .then((review) => {
       res.status(200).send({ review });
-    })
-    .catch(next);
-};
-
-exports.getUsers = (req, res, next) => {
-  selectUsers()
-    .then((users) => {
-      res.status(200).send({ users });
     })
     .catch(next);
 };
