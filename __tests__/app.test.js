@@ -512,3 +512,65 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("200: patches correctly", () => {
+    const newVotes = { inc_votes: 4 };
+    request(app)
+      .patch("/api/comments/1")
+      .send(newVotes)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comment).toMatchObject({
+          comment_id: 1,
+          body: "I loved this game too!",
+          review_id: 2,
+          author: "bainesface",
+          votes: 20,
+          created_at: "2017-11-22 12:43:33.389",
+        });
+      });
+  });
+  test("400: bad comment name", () => {
+    const newVotes = { inc_votes: 4 };
+    request(app)
+      .patch("/api/comments/hello")
+      .send(newVotes)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("400: bad votes name", () => {
+    const newVotes = { inc_votes: "hello" };
+    request(app)
+      .patch("/api/comments/hello")
+      .send(newVotes)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("400: votes does not contain inc_votes", () => {
+    const newVotes = { int_votes: 3 };
+    request(app)
+      .patch("/api/comments/1")
+      .send(newVotes)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+  test("404: comment not found", () => {
+    const newVotes = { inc_votes: 3 };
+    request(app)
+      .patch("/api/comments/4123562173836218")
+      .send(newVotes)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Resource not found");
+      });
+  });
+});

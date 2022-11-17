@@ -2,7 +2,7 @@ const express = require("express");
 const { getInfo } = require("./controllers/base_controller.js");
 const app = express();
 const { getCategories } = require("./controllers/categories_controller.js");
-const { deleteComment } = require("./controllers/comments_controller.js");
+const { deleteComment, patchComment } = require("./controllers/comments_controller.js");
 const apiRouter = require("./routes/api-router.js");
 const reviewsRouter = require("./routes/reviews-router.js");
 const usersRouter = require("./routes/users-router.js");
@@ -18,6 +18,7 @@ app.use("/api/users", usersRouter);
 app.get("/api/categories", getCategories);
 
 app.delete("/api/comments/:comment_id", deleteComment);
+app.patch("/api/comments/:comment_id", patchComment);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Route not found" });
