@@ -13,7 +13,7 @@ exports.patchComment = (req, res, next) => {
   const { comment_id } = req.params;
   const newVotes = req.body;
   updateComment(comment_id, newVotes)
-    .then((comment) => {
+    .then(() => {
       res.status(200).end();
     })
     .catch(next);

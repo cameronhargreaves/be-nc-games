@@ -1,3 +1,4 @@
+const { id } = require("prelude-ls");
 const db = require("../db/connection.js");
 const { checkExists } = require("../utils/utils.js");
 
@@ -154,4 +155,41 @@ exports.updateReview = (review_id, updatedReview) => {
     .then((comments) => {
       return comments.rows[0];
     });
+};
+
+exports.insertReview = (newReview) => {
+  if (
+    !newReview.hasOwnProperty("owner") ||
+    !newReview.hasOwnProperty("title") ||
+    !newReview.hasOwnProperty("review_body") ||
+    !newReview.hasOwnProperty("designer") ||
+    !newReview.hasOwnProperty("category")
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  const { owner, title, review_body, designer, category } = newReview;
+  if (!owner || !title || !review_body || !designer || !category) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  return checkExists("users", "username", owner).then(() => {
+    return checkExists("categories", "slug", category).then(() => {
+      return db
+        .query(
+          `INSERT INTO reviews
+        (title, category, designer, owner, review_body, created_at, votes) VALUES ($1,$2,$3,$4,$5,$6,$7)
+         RETURNING *`,
+          [title, category, designer, owner, review_body, new Date(), 0]
+        )
+        .then((review) => {
+          const id = review.rows[0].review_id;
+          return this.selectReview(id);
+        });
+    });
+  });
 };

@@ -574,3 +574,93 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/reviews", () => {
+  test("201: adds a new review", () => {
+    const newReview = {
+      owner: "bainesface",
+      title: "garbage",
+      review_body: "worst thing ever",
+      designer: "Uwe Rosenberg",
+      category: "euro game",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(newReview)
+      .expect(201)
+      .then((res) => {
+        expect(res.body.review).toMatchObject({
+          review_id: expect.any(Number),
+          owner: "bainesface",
+          title: "garbage",
+          review_body: "worst thing ever",
+          designer: "Uwe Rosenberg",
+          category: "euro game",
+          votes: 0,
+          created_at: expect.any(String),
+          comment_count: 0,
+        });
+      });
+  });
+  test("404: given owner not in users table", () => {
+    const newReview = {
+      owner: "cameronhargreaves",
+      title: "garbage",
+      review_body: "worst thing ever",
+      designer: "Uwe Rosenberg",
+      category: "euro game",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(newReview)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Resource not found");
+      });
+  });
+  test("404: given category not in categories table", () => {
+    const newReview = {
+      owner: "mallionaire",
+      title: "garbage",
+      review_body: "worst thing ever",
+      designer: "Uwe Rosenberg",
+      category: "cool game",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(newReview)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Resource not found");
+      });
+  });
+  test("400: given undefined properties", () => {
+    const newReview = {
+      owner: "mallionaire",
+      title: undefined,
+      review_body: undefined,
+      designer: undefined,
+      category: "cool game",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(newReview)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: missing properties", () => {
+    const newReview = {
+      owner: "mallionaire",
+      category: "cool game",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(newReview)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+});
